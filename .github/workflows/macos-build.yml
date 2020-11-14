@@ -1,0 +1,29 @@
+name: macos-build
+
+on:
+  issues:
+    types: [opened]
+    
+jobs:
+  build:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v2
+      - run: brew install gperf cmake openssl coreutils
+      - run: git clone https://github.com/tdlib/td.git
+      - run: cd td
+      - run: rm -rf build
+      - run: mkdir build
+      - run: cd build
+      - run: cmake -DCMAKE_BUILD_TYPE=Release -DOPENSSL_ROOT_DIR=/usr/local/opt/openssl/ -DCMAKE_INSTALL_PREFIX:PATH=../example/java/td -DTD_ENABLE_JNI=ON ..
+      - run: cmake --build . --target install
+      - run: cd ..
+      - run: cd example/java
+      - run: rm -rf build
+      - run: mkdir build
+      - run: cd build
+      - run: cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX:PATH=../../../tdlib -DTd_DIR:PATH=$(greadlink -e ../td/lib/cmake/Td) ..
+      - run: cmake --build . --target install
+      - run: cd ../../..
+      - run: cd ..
+      - run: ls -l td/tdlib
