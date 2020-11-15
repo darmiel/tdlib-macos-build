@@ -1,0 +1,10 @@
+prefix=/Users/runner/work/tdlib-macos-build/tdlib-macos-build/example/java/td
+
+Name: tdcore
+Description: Telegram Library - Core
+Version: 1.6.10
+
+CFlags: -I"${prefix}/include"
+Libs: -L"${prefix}/lib" -ltdcore
+Requires.private: tdapi tdactor tdutils tdnet tddb
+Libs.private: -L"/usr/local/opt/openssl/lib" -l:libcrypto.dylib -L"/Applications/Xcode_11.7.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.15.sdk/usr/lib" -l:libz.tbd
