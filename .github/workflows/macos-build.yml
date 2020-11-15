@@ -2,28 +2,85 @@ name: macos-build
 
 on:
   issues:
-    types: [opened]
+    types: [opened, reopened, closed]
+  push:
+    branches: 
+      - master
+  schedule:
+    - cron: '0 8 * * *'
     
 jobs:
   build:
-    runs-on: macos-latest
+    runs-on: ${{ matrix.runs-on }}
+    continue-on-error: true # test on other systems
+    strategy:
+      max-parallel: 1 # we don't want to collide with the git pushes
+      matrix:
+        runs-on: [macos-10.15, macos-11.0] #10.15 -> catalina, 11.0 -> big sur
     steps:
-      - uses: actions/checkout@v2
-      - run: brew install gperf cmake openssl coreutils
-      - run: git clone https://github.com/tdlib/td.git
-      - run: cd td
-      - run: rm -rf build
-      - run: mkdir build
-      - run: cd build
-      - run: cmake -DCMAKE_BUILD_TYPE=Release -DOPENSSL_ROOT_DIR=/usr/local/opt/openssl/ -DCMAKE_INSTALL_PREFIX:PATH=../example/java/td -DTD_ENABLE_JNI=ON ..
-      - run: cmake --build . --target install
-      - run: cd ..
-      - run: cd example/java
-      - run: rm -rf build
-      - run: mkdir build
-      - run: cd build
-      - run: cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX:PATH=../../../tdlib -DTd_DIR:PATH=$(greadlink -e ../td/lib/cmake/Td) ..
-      - run: cmake --build . --target install
-      - run: cd ../../..
-      - run: cd ..
-      - run: ls -l td/tdlib
+      
+      - name: Checkout TDLib repository
+        uses: actions/checkout@v2
+        with:
+          path: td      
+      
+      - name: Install dependencies
+        run: brew install gperf cmake openssl coreutils
+      
+      - name: Create ${{ matrix.runs-on }}/src and ${{ matrix.runs-on }}/libs for later git upload
+        run: |
+          # we need these folders for later git upload
+          mkdir -p ${{ matrix.runs-on }}/src
+          mkdir -p ${{ matrix.runs-on }}/libs
+          
+      - name: Build with JNI
+        run: |
+          cd td
+          rm -rf build
+          mkdir -p build
+          
+          # cmake
+          cmake -DCMAKE_BUILD_TYPE=Release -DOPENSSL_ROOT_DIR=/usr/local/opt/openssl/ -DCMAKE_INSTALL_PREFIX:PATH=../example/java/td -DTD_ENABLE_JNI=ON ..
+          cmake --build . --target install
+          
+      - name: Build java example
+        run: |
+          cd td/example/java
+          rm -rf build
+          mkdir build
+          cd build
+          
+          # cmake
+          cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX:PATH=../../../tdlib -DTd_DIR:PATH=$(greadlink -e ../td/lib/cmake/Td) ..
+          cmake --build . --target install
+      
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: java-${{ matrix.runs-on }}
+          path: ./td/tdlib/bin/*
+      
+      - name: Checkout tdlib-macos-build repository
+        uses: actions/checkout@v2
+        with:
+          path:  tdlib-macos-build
+      
+      - name: Copy files to new repository
+        continue-on-error: true # if any files don't exists yet
+        run: |
+          # create folders
+          mkdir -p tdlib-macos-build/${{ matrix.runs-on }}/src
+          mkdir -p tdlib-macos-build/${{ matrix.runs-on }}/libs
+          
+          # copy files
+          cp td/examples/java/* tdlib-macos-build/${{ matrix.runs-on }}/src
+          cp td/tdlib/bin/* tdlib-macos-build/${{ matrix.runs-on }}/libs
+      
+      - name: Upload via git into current repository
+        run: |
+          cd tdlib-macos-build
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git add ${{ matrix.runs-on }}
+          git commit -m "Updated src and lib for ${{ matrix.runs-on }}"
+          git push
