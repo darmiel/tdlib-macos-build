@@ -22,7 +22,8 @@ jobs:
       - name: Checkout TDLib repository
         uses: actions/checkout@v2
         with:
-          path: td      
+          repository: tdlib/td
+          path: td
       
       - name: Install dependencies
         run: brew install gperf cmake openssl coreutils
