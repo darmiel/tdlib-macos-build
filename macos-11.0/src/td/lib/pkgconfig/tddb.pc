@@ -1,9 +1,0 @@
-prefix=/Users/runner/work/tdlib-macos-build/tdlib-macos-build/example/java/td
-
-Name: tddb
-Description: Telegram Library - Database
-Version: 1.6.10
-
-CFlags: -I"${prefix}/include"
-Libs: -L"${prefix}/lib" -ltddb
-Requires.private: tdactor tdutils tdsqlite

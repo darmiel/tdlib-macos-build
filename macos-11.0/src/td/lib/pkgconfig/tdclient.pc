@@ -1,9 +1,0 @@
-prefix=/Users/runner/work/tdlib-macos-build/tdlib-macos-build/example/java/td
-
-Name: tdclient
-Description: Telegram Library - C++ Interface
-Version: 1.6.10
-
-CFlags: -I"${prefix}/include"
-Libs: -L"${prefix}/lib" -ltdclient
-Requires.private: tdapi tdcore

@@ -1,9 +1,0 @@
-prefix=/Users/runner/work/tdlib-macos-build/tdlib-macos-build/example/java/td
-
-Name: tdjson_private
-Description: Telegram Library - JSON interface (private)
-Version: 1.6.10
-
-CFlags: -I"${prefix}/include"
-Libs: -L"${prefix}/lib" -ltdjson_private
-Requires.private: tdclient tdutils
