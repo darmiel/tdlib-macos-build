@@ -2,7 +2,8 @@ name: macos-build
 
 on:
   issues:
-    types: [opened, reopened, closed]
+    types: 
+      - opened
   push:
     branches: 
       - main
@@ -13,54 +14,55 @@ jobs:
   build:
     runs-on: ${{ matrix.runs-on }}
     continue-on-error: true # test on other systems
+    
     strategy:
       max-parallel: 1 # we don't want to collide with the git pushes
       matrix:
         runs-on: [macos-10.15, macos-11.0] #10.15 -> catalina, 11.0 -> big sur
-    steps:
-      
-      - name: "👉 Checkout TDLib repository"
+    
+    steps:  
+      - name: "👉  Checkout TDLib repository"
         uses: actions/checkout@v2
         with:
           repository: tdlib/td
           path: td
       
-      - name: "👉 Checkout tdlib-macos-build repository"
+      - name: "👉  Checkout tdlib-macos-build repository"
         uses: actions/checkout@v2
         with:
           path: tdlib-macos-build
       
-      - name: "🍺 Install dependencies"
+      - name: "🍺  Install dependencies"
         run: brew install gperf cmake openssl coreutils
                 
-      #- name: Build with JNI
-      #  run: |
-      #    cd td
-      #    rm -rf build
-      #    mkdir -p build
-      #    cd build
-      #    
-      #    # cmake
-      #    cmake -DCMAKE_BUILD_TYPE=Release -DOPENSSL_ROOT_DIR=/usr/local/opt/openssl/ -DCMAKE_INSTALL_PREFIX:PATH=../example/java/td -DTD_ENABLE_JNI=ON ..
-      #    cmake --build . --target install
-      #    
-      #- name: Build java example
-      #  run: |
-      #    cd td/example/java
-      #    rm -rf build
-      #    mkdir build
-      #    cd build
-      #    
-      #    # cmake
-      #    cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX:PATH=../../../tdlib -DTd_DIR:PATH=$(greadlink -e ../td/lib/cmake/Td) ..
-      #    cmake --build . --target install
-      #
-      #- name: Upload artifacts
-      #  uses: actions/upload-artifact@v2
-      #  with:
-      #    name: java-${{ matrix.runs-on }}
-      #    path: ./td/tdlib/bin/*
-            
+      - name: "🔨  Build with JNI"
+        run: |
+          cd td
+          rm -rf build
+          mkdir -p build
+          cd build
+          
+          # cmake
+          cmake -DCMAKE_BUILD_TYPE=Release -DOPENSSL_ROOT_DIR=/usr/local/opt/openssl/ -DCMAKE_INSTALL_PREFIX:PATH=../example/java/td -DTD_ENABLE_JNI=ON ..
+          cmake --build . --target install
+          
+      - name: "🔨  Build java example"
+        run: |
+          cd td/example/java
+          rm -rf build
+          mkdir build
+          cd build
+          
+          # cmake
+          cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX:PATH=../../../tdlib -DTd_DIR:PATH=$(greadlink -e ../td/lib/cmake/Td) ..
+          cmake --build . --target install
+      
+      - name: "📦  Upload artifacts"
+        uses: actions/upload-artifact@v2
+        with:
+          name: java-${{ matrix.runs-on }}
+          path: ./td/tdlib/bin/*
+           
       - name: "📂 Delete old files and copy new files to current repository"
         continue-on-error: true # if any files don't exists yet
         run: |
@@ -88,5 +90,5 @@ jobs:
           git config user.name github-actions
           git config user.email github-actions@github.com
           git add ${{ matrix.runs-on }}
-          git commit -m "Updated src and lib for ${{ matrix.runs-on }}"
-          git push
+          git commit -m "Updated src and lib for ${{ matrix.runs-on }} [$(date)]"
+          git push --force origin main
