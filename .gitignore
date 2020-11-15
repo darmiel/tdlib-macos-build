@@ -1,2 +1,8 @@
 *.un~
 *.yml~
+
+# no source files
+*.class
+
+# no workflow dirs
+.github/
