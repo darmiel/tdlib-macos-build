@@ -81,7 +81,11 @@ jobs:
           echo "Repo Directory:"
           ls -la tdlib-macos-build
           
-          cp -rf td/example/java/* tdlib-macos-build/${{ matrix.runs-on }}/src
+          # java source
+          cp -rf td/example/java/*.md tdlib-macos-build/${{ matrix.runs-on }}/src
+          cp -rf td/example/java/org tdlib-macos-build/${{ matrix.runs-on }}/src
+          
+          # library
           cp -rf td/tdlib/bin/* tdlib-macos-build/${{ matrix.runs-on }}/libs
       
       - name: "📦   Upload via git into current repository"
