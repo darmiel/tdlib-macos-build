@@ -46369,7 +46369,7 @@ public class TdApi {
          */
         public int supergroupId;
         /**
-         * The type of users to return. By default, supergroupMembersRecent.
+         * The type of users to return. By default, supergroupMembersFilterRecent.
          */
         public SupergroupMembersFilter filter;
         /**
@@ -46395,7 +46395,7 @@ public class TdApi {
          * <p> Returns {@link ChatMembers ChatMembers} </p>
          *
          * @param supergroupId Identifier of the supergroup or channel.
-         * @param filter The type of users to return. By default, supergroupMembersRecent.
+         * @param filter The type of users to return. By default, supergroupMembersFilterRecent.
          * @param offset Number of users to skip.
          * @param limit The maximum number of users be returned; up to 200.
          */
