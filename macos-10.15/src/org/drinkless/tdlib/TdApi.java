@@ -18605,7 +18605,7 @@ public class TdApi {
          */
         public long chatId;
         /**
-         * Message identifier of the original message; 0 if unknown.
+         * Message identifier of the original message.
          */
         public long messageId;
         /**
@@ -18623,7 +18623,7 @@ public class TdApi {
          * The message was originally a post in a channel.
          *
          * @param chatId Identifier of the chat from which the message was originally forwarded.
-         * @param messageId Message identifier of the original message; 0 if unknown.
+         * @param messageId Message identifier of the original message.
          * @param authorSignature Original post author signature.
          */
         public MessageForwardOriginChannel(long chatId, long messageId, String authorSignature) {
