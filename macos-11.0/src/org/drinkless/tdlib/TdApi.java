@@ -2221,7 +2221,7 @@ public class TdApi {
          */
         public int maxLayer;
         /**
-         * List of supported libtgvoip versions.
+         * List of supported tgcalls versions.
          */
         public String[] libraryVersions;
 
@@ -2238,7 +2238,7 @@ public class TdApi {
          * @param udpReflector True, if connection through UDP reflectors is supported.
          * @param minLayer The minimum supported API layer; use 65.
          * @param maxLayer The maximum supported API layer; use 65.
-         * @param libraryVersions List of supported libtgvoip versions.
+         * @param libraryVersions List of supported tgcalls versions.
          */
         public CallProtocol(boolean udpP2p, boolean udpReflector, int minLayer, int maxLayer, String[] libraryVersions) {
             this.udpP2p = udpP2p;
@@ -3077,6 +3077,14 @@ public class TdApi {
          */
         public ChatActionBar actionBar;
         /**
+         * Group call identifier of an active voice chat; 0 if none or unknown. The voice chat can be received through the method getGroupCall.
+         */
+        public int voiceChatGroupCallId;
+        /**
+         * True, if an active voice chat is empty.
+         */
+        public boolean isVoiceChatEmpty;
+        /**
          * Identifier of the message from which reply markup needs to be used; 0 if there is no default custom reply markup in the chat.
          */
         public long replyMarkupMessageId;
@@ -3118,11 +3126,13 @@ public class TdApi {
          * @param unreadMentionCount Number of unread messages with a mention/reply in the chat.
          * @param notificationSettings Notification settings for this chat.
          * @param actionBar Describes actions which should be possible to do through a chat action bar; may be null.
+         * @param voiceChatGroupCallId Group call identifier of an active voice chat; 0 if none or unknown. The voice chat can be received through the method getGroupCall.
+         * @param isVoiceChatEmpty True, if an active voice chat is empty.
          * @param replyMarkupMessageId Identifier of the message from which reply markup needs to be used; 0 if there is no default custom reply markup in the chat.
          * @param draftMessage A draft of a message in the chat; may be null.
          * @param clientData Contains application-specific data associated with the chat. (For example, the chat scroll position or local chat notification settings can be stored here.) Persistent if the message database is used.
          */
-        public Chat(long id, ChatType type, String title, ChatPhotoInfo photo, ChatPermissions permissions, Message lastMessage, ChatPosition[] positions, boolean isMarkedAsUnread, boolean isBlocked, boolean hasScheduledMessages, boolean canBeDeletedOnlyForSelf, boolean canBeDeletedForAllUsers, boolean canBeReported, boolean defaultDisableNotification, int unreadCount, long lastReadInboxMessageId, long lastReadOutboxMessageId, int unreadMentionCount, ChatNotificationSettings notificationSettings, ChatActionBar actionBar, long replyMarkupMessageId, DraftMessage draftMessage, String clientData) {
+        public Chat(long id, ChatType type, String title, ChatPhotoInfo photo, ChatPermissions permissions, Message lastMessage, ChatPosition[] positions, boolean isMarkedAsUnread, boolean isBlocked, boolean hasScheduledMessages, boolean canBeDeletedOnlyForSelf, boolean canBeDeletedForAllUsers, boolean canBeReported, boolean defaultDisableNotification, int unreadCount, long lastReadInboxMessageId, long lastReadOutboxMessageId, int unreadMentionCount, ChatNotificationSettings notificationSettings, ChatActionBar actionBar, int voiceChatGroupCallId, boolean isVoiceChatEmpty, long replyMarkupMessageId, DraftMessage draftMessage, String clientData) {
             this.id = id;
             this.type = type;
             this.title = title;
@@ -3143,6 +3153,8 @@ public class TdApi {
             this.unreadMentionCount = unreadMentionCount;
             this.notificationSettings = notificationSettings;
             this.actionBar = actionBar;
+            this.voiceChatGroupCallId = voiceChatGroupCallId;
+            this.isVoiceChatEmpty = isVoiceChatEmpty;
             this.replyMarkupMessageId = replyMarkupMessageId;
             this.draftMessage = draftMessage;
             this.clientData = clientData;
@@ -3151,7 +3163,7 @@ public class TdApi {
         /**
          * Identifier uniquely determining type of the object.
          */
-        public static final int CONSTRUCTOR = 1811058223;
+        public static final int CONSTRUCTOR = -923907435;
 
         /**
          * @return this.CONSTRUCTOR
@@ -4775,6 +4787,164 @@ public class TdApi {
     }
 
     /**
+     * A voice chat was created.
+     */
+    public static class ChatEventVoiceChatCreated extends ChatEventAction {
+        /**
+         * Identifier of the voice chat. The voice chat can be received through the method getGroupCall.
+         */
+        public int groupCallId;
+
+        /**
+         * A voice chat was created.
+         */
+        public ChatEventVoiceChatCreated() {
+        }
+
+        /**
+         * A voice chat was created.
+         *
+         * @param groupCallId Identifier of the voice chat. The voice chat can be received through the method getGroupCall.
+         */
+        public ChatEventVoiceChatCreated(int groupCallId) {
+            this.groupCallId = groupCallId;
+        }
+
+        /**
+         * Identifier uniquely determining type of the object.
+         */
+        public static final int CONSTRUCTOR = -1532557526;
+
+        /**
+         * @return this.CONSTRUCTOR
+         */
+        @Override
+        public int getConstructor() {
+            return CONSTRUCTOR;
+        }
+    }
+
+    /**
+     * A voice chat was discarded.
+     */
+    public static class ChatEventVoiceChatDiscarded extends ChatEventAction {
+        /**
+         * Identifier of the voice chat. The voice chat can be received through the method getGroupCall.
+         */
+        public int groupCallId;
+
+        /**
+         * A voice chat was discarded.
+         */
+        public ChatEventVoiceChatDiscarded() {
+        }
+
+        /**
+         * A voice chat was discarded.
+         *
+         * @param groupCallId Identifier of the voice chat. The voice chat can be received through the method getGroupCall.
+         */
+        public ChatEventVoiceChatDiscarded(int groupCallId) {
+            this.groupCallId = groupCallId;
+        }
+
+        /**
+         * Identifier uniquely determining type of the object.
+         */
+        public static final int CONSTRUCTOR = -511896882;
+
+        /**
+         * @return this.CONSTRUCTOR
+         */
+        @Override
+        public int getConstructor() {
+            return CONSTRUCTOR;
+        }
+    }
+
+    /**
+     * A voice chat participant was muted or unmuted.
+     */
+    public static class ChatEventVoiceChatParticipantIsMutedToggled extends ChatEventAction {
+        /**
+         * Identifier of the affected user.
+         */
+        public int userId;
+        /**
+         * New value of isMuted.
+         */
+        public boolean isMuted;
+
+        /**
+         * A voice chat participant was muted or unmuted.
+         */
+        public ChatEventVoiceChatParticipantIsMutedToggled() {
+        }
+
+        /**
+         * A voice chat participant was muted or unmuted.
+         *
+         * @param userId Identifier of the affected user.
+         * @param isMuted New value of isMuted.
+         */
+        public ChatEventVoiceChatParticipantIsMutedToggled(int userId, boolean isMuted) {
+            this.userId = userId;
+            this.isMuted = isMuted;
+        }
+
+        /**
+         * Identifier uniquely determining type of the object.
+         */
+        public static final int CONSTRUCTOR = 701942959;
+
+        /**
+         * @return this.CONSTRUCTOR
+         */
+        @Override
+        public int getConstructor() {
+            return CONSTRUCTOR;
+        }
+    }
+
+    /**
+     * The muteNewParticipants setting of a voice chat was toggled.
+     */
+    public static class ChatEventVoiceChatMuteNewParticipantsToggled extends ChatEventAction {
+        /**
+         * New value of the muteNewParticipants setting.
+         */
+        public boolean muteNewParticipants;
+
+        /**
+         * The muteNewParticipants setting of a voice chat was toggled.
+         */
+        public ChatEventVoiceChatMuteNewParticipantsToggled() {
+        }
+
+        /**
+         * The muteNewParticipants setting of a voice chat was toggled.
+         *
+         * @param muteNewParticipants New value of the muteNewParticipants setting.
+         */
+        public ChatEventVoiceChatMuteNewParticipantsToggled(boolean muteNewParticipants) {
+            this.muteNewParticipants = muteNewParticipants;
+        }
+
+        /**
+         * Identifier uniquely determining type of the object.
+         */
+        public static final int CONSTRUCTOR = 557181074;
+
+        /**
+         * @return this.CONSTRUCTOR
+         */
+        @Override
+        public int getConstructor() {
+            return CONSTRUCTOR;
+        }
+    }
+
+    /**
      * Represents a set of filters used to obtain a chat event log.
      */
     public static class ChatEventLogFilters extends Object {
@@ -4818,6 +4988,10 @@ public class TdApi {
          * True, if changes in chat settings should be returned.
          */
         public boolean settingChanges;
+        /**
+         * True, if voice chat actions should be returned.
+         */
+        public boolean voiceChatChanges;
 
         /**
          * Represents a set of filters used to obtain a chat event log.
@@ -4838,8 +5012,9 @@ public class TdApi {
          * @param memberRestrictions True, if member restricted/unrestricted/banned/unbanned events should be returned.
          * @param infoChanges True, if changes in chat information should be returned.
          * @param settingChanges True, if changes in chat settings should be returned.
+         * @param voiceChatChanges True, if voice chat actions should be returned.
          */
-        public ChatEventLogFilters(boolean messageEdits, boolean messageDeletions, boolean messagePins, boolean memberJoins, boolean memberLeaves, boolean memberInvites, boolean memberPromotions, boolean memberRestrictions, boolean infoChanges, boolean settingChanges) {
+        public ChatEventLogFilters(boolean messageEdits, boolean messageDeletions, boolean messagePins, boolean memberJoins, boolean memberLeaves, boolean memberInvites, boolean memberPromotions, boolean memberRestrictions, boolean infoChanges, boolean settingChanges, boolean voiceChatChanges) {
             this.messageEdits = messageEdits;
             this.messageDeletions = messageDeletions;
             this.messagePins = messagePins;
@@ -4850,12 +5025,13 @@ public class TdApi {
             this.memberRestrictions = memberRestrictions;
             this.infoChanges = infoChanges;
             this.settingChanges = settingChanges;
+            this.voiceChatChanges = voiceChatChanges;
         }
 
         /**
          * Identifier uniquely determining type of the object.
          */
-        public static final int CONSTRUCTOR = 941939684;
+        public static final int CONSTRUCTOR = 770025239;
 
         /**
          * @return this.CONSTRUCTOR
@@ -5479,7 +5655,7 @@ public class TdApi {
     }
 
     /**
-     * The user is a member of a chat and has some additional privileges. In basic groups, administrators can edit and delete messages sent by others, add new members, and ban unprivileged members. In supergroups and channels, there are more detailed options for administrator privileges.
+     * The user is a member of a chat and has some additional privileges. In basic groups, administrators can edit and delete messages sent by others, add new members, ban unprivileged members, and manage voice chats. In supergroups and channels, there are more detailed options for administrator privileges.
      */
     public static class ChatMemberStatusAdministrator extends ChatMemberStatus {
         /**
@@ -5523,18 +5699,22 @@ public class TdApi {
          */
         public boolean canPromoteMembers;
         /**
+         * True, if the administrator can manage voice chats; applicable to groups only.
+         */
+        public boolean canManageVoiceChats;
+        /**
          * True, if the administrator isn't shown in the chat member list and sends messages anonymously; applicable to supergroups only.
          */
         public boolean isAnonymous;
 
         /**
-         * The user is a member of a chat and has some additional privileges. In basic groups, administrators can edit and delete messages sent by others, add new members, and ban unprivileged members. In supergroups and channels, there are more detailed options for administrator privileges.
+         * The user is a member of a chat and has some additional privileges. In basic groups, administrators can edit and delete messages sent by others, add new members, ban unprivileged members, and manage voice chats. In supergroups and channels, there are more detailed options for administrator privileges.
          */
         public ChatMemberStatusAdministrator() {
         }
 
         /**
-         * The user is a member of a chat and has some additional privileges. In basic groups, administrators can edit and delete messages sent by others, add new members, and ban unprivileged members. In supergroups and channels, there are more detailed options for administrator privileges.
+         * The user is a member of a chat and has some additional privileges. In basic groups, administrators can edit and delete messages sent by others, add new members, ban unprivileged members, and manage voice chats. In supergroups and channels, there are more detailed options for administrator privileges.
          *
          * @param customTitle A custom title of the administrator; 0-16 characters without emojis; applicable to supergroups only.
          * @param canBeEdited True, if the current user can edit the administrator privileges for the called user.
@@ -5546,9 +5726,10 @@ public class TdApi {
          * @param canRestrictMembers True, if the administrator can restrict, ban, or unban chat members.
          * @param canPinMessages True, if the administrator can pin messages; applicable to groups only.
          * @param canPromoteMembers True, if the administrator can add new administrators with a subset of their own privileges or demote administrators that were directly or indirectly promoted by them.
+         * @param canManageVoiceChats True, if the administrator can manage voice chats; applicable to groups only.
          * @param isAnonymous True, if the administrator isn't shown in the chat member list and sends messages anonymously; applicable to supergroups only.
          */
-        public ChatMemberStatusAdministrator(String customTitle, boolean canBeEdited, boolean canChangeInfo, boolean canPostMessages, boolean canEditMessages, boolean canDeleteMessages, boolean canInviteUsers, boolean canRestrictMembers, boolean canPinMessages, boolean canPromoteMembers, boolean isAnonymous) {
+        public ChatMemberStatusAdministrator(String customTitle, boolean canBeEdited, boolean canChangeInfo, boolean canPostMessages, boolean canEditMessages, boolean canDeleteMessages, boolean canInviteUsers, boolean canRestrictMembers, boolean canPinMessages, boolean canPromoteMembers, boolean canManageVoiceChats, boolean isAnonymous) {
             this.customTitle = customTitle;
             this.canBeEdited = canBeEdited;
             this.canChangeInfo = canChangeInfo;
@@ -5559,13 +5740,14 @@ public class TdApi {
             this.canRestrictMembers = canRestrictMembers;
             this.canPinMessages = canPinMessages;
             this.canPromoteMembers = canPromoteMembers;
+            this.canManageVoiceChats = canManageVoiceChats;
             this.isAnonymous = isAnonymous;
         }
 
         /**
          * Identifier uniquely determining type of the object.
          */
-        public static final int CONSTRUCTOR = 222495835;
+        public static final int CONSTRUCTOR = 306691600;
 
         /**
          * @return this.CONSTRUCTOR
@@ -7490,6 +7672,44 @@ public class TdApi {
          * Identifier uniquely determining type of the object.
          */
         public static final int CONSTRUCTOR = -51833641;
+
+        /**
+         * @return this.CONSTRUCTOR
+         */
+        @Override
+        public int getConstructor() {
+            return CONSTRUCTOR;
+        }
+    }
+
+    /**
+     * Represents a closed vector path. The path begins at the end point of the last command.
+     */
+    public static class ClosedVectorPath extends Object {
+        /**
+         * List of vector path commands.
+         */
+        public VectorPathCommand[] commands;
+
+        /**
+         * Represents a closed vector path. The path begins at the end point of the last command.
+         */
+        public ClosedVectorPath() {
+        }
+
+        /**
+         * Represents a closed vector path. The path begins at the end point of the last command.
+         *
+         * @param commands List of vector path commands.
+         */
+        public ClosedVectorPath(VectorPathCommand[] commands) {
+            this.commands = commands;
+        }
+
+        /**
+         * Identifier uniquely determining type of the object.
+         */
+        public static final int CONSTRUCTOR = 589951657;
 
         /**
          * @return this.CONSTRUCTOR
@@ -9920,6 +10140,482 @@ public class TdApi {
     }
 
     /**
+     * Describes a group call.
+     */
+    public static class GroupCall extends Object {
+        /**
+         * Group call identifier.
+         */
+        public int id;
+        /**
+         * True, if the call is active.
+         */
+        public boolean isActive;
+        /**
+         * True, if the call is joined.
+         */
+        public boolean isJoined;
+        /**
+         * True, if user was kicked from the call because of network loss and the call needs to be rejoined.
+         */
+        public boolean needRejoin;
+        /**
+         * True, if the current user can unmute themself.
+         */
+        public boolean canUnmuteSelf;
+        /**
+         * True, if the current user can manage the group call.
+         */
+        public boolean canBeManaged;
+        /**
+         * Number of participants in the group call.
+         */
+        public int participantCount;
+        /**
+         * True, if all group call participants are loaded.
+         */
+        public boolean loadedAllParticipants;
+        /**
+         * Identifiers of recently speaking users in the group call.
+         */
+        public int[] recentSpeakerUserIds;
+        /**
+         * True, if only group call administrators can unmute new participants.
+         */
+        public boolean muteNewParticipants;
+        /**
+         * True, if group call administrators can enable or disable muteNewParticipants setting.
+         */
+        public boolean allowedChangeMuteNewParticipants;
+        /**
+         * Call duration; for ended calls only.
+         */
+        public int duration;
+
+        /**
+         * Describes a group call.
+         */
+        public GroupCall() {
+        }
+
+        /**
+         * Describes a group call.
+         *
+         * @param id Group call identifier.
+         * @param isActive True, if the call is active.
+         * @param isJoined True, if the call is joined.
+         * @param needRejoin True, if user was kicked from the call because of network loss and the call needs to be rejoined.
+         * @param canUnmuteSelf True, if the current user can unmute themself.
+         * @param canBeManaged True, if the current user can manage the group call.
+         * @param participantCount Number of participants in the group call.
+         * @param loadedAllParticipants True, if all group call participants are loaded.
+         * @param recentSpeakerUserIds Identifiers of recently speaking users in the group call.
+         * @param muteNewParticipants True, if only group call administrators can unmute new participants.
+         * @param allowedChangeMuteNewParticipants True, if group call administrators can enable or disable muteNewParticipants setting.
+         * @param duration Call duration; for ended calls only.
+         */
+        public GroupCall(int id, boolean isActive, boolean isJoined, boolean needRejoin, boolean canUnmuteSelf, boolean canBeManaged, int participantCount, boolean loadedAllParticipants, int[] recentSpeakerUserIds, boolean muteNewParticipants, boolean allowedChangeMuteNewParticipants, int duration) {
+            this.id = id;
+            this.isActive = isActive;
+            this.isJoined = isJoined;
+            this.needRejoin = needRejoin;
+            this.canUnmuteSelf = canUnmuteSelf;
+            this.canBeManaged = canBeManaged;
+            this.participantCount = participantCount;
+            this.loadedAllParticipants = loadedAllParticipants;
+            this.recentSpeakerUserIds = recentSpeakerUserIds;
+            this.muteNewParticipants = muteNewParticipants;
+            this.allowedChangeMuteNewParticipants = allowedChangeMuteNewParticipants;
+            this.duration = duration;
+        }
+
+        /**
+         * Identifier uniquely determining type of the object.
+         */
+        public static final int CONSTRUCTOR = 1459466524;
+
+        /**
+         * @return this.CONSTRUCTOR
+         */
+        @Override
+        public int getConstructor() {
+            return CONSTRUCTOR;
+        }
+    }
+
+    /**
+     * Contains the group call identifier.
+     */
+    public static class GroupCallId extends Object {
+        /**
+         * Group call identifier.
+         */
+        public int id;
+
+        /**
+         * Contains the group call identifier.
+         */
+        public GroupCallId() {
+        }
+
+        /**
+         * Contains the group call identifier.
+         *
+         * @param id Group call identifier.
+         */
+        public GroupCallId(int id) {
+            this.id = id;
+        }
+
+        /**
+         * Identifier uniquely determining type of the object.
+         */
+        public static final int CONSTRUCTOR = 350534469;
+
+        /**
+         * @return this.CONSTRUCTOR
+         */
+        @Override
+        public int getConstructor() {
+            return CONSTRUCTOR;
+        }
+    }
+
+    /**
+     * Describes a join response for interaction with tgcalls.
+     */
+    public static class GroupCallJoinResponse extends Object {
+        /**
+         * Join response payload to pass to tgcalls.
+         */
+        public GroupCallPayload payload;
+        /**
+         * Join response candidates to pass to tgcalls.
+         */
+        public GroupCallJoinResponseCandidate[] candidates;
+
+        /**
+         * Describes a join response for interaction with tgcalls.
+         */
+        public GroupCallJoinResponse() {
+        }
+
+        /**
+         * Describes a join response for interaction with tgcalls.
+         *
+         * @param payload Join response payload to pass to tgcalls.
+         * @param candidates Join response candidates to pass to tgcalls.
+         */
+        public GroupCallJoinResponse(GroupCallPayload payload, GroupCallJoinResponseCandidate[] candidates) {
+            this.payload = payload;
+            this.candidates = candidates;
+        }
+
+        /**
+         * Identifier uniquely determining type of the object.
+         */
+        public static final int CONSTRUCTOR = -194586855;
+
+        /**
+         * @return this.CONSTRUCTOR
+         */
+        @Override
+        public int getConstructor() {
+            return CONSTRUCTOR;
+        }
+    }
+
+    /**
+     * Describes a join response candidate for interaction with tgcalls.
+     */
+    public static class GroupCallJoinResponseCandidate extends Object {
+        /**
+         * Value of the field port.
+         */
+        public String port;
+        /**
+         * Value of the field protocol.
+         */
+        public String protocol;
+        /**
+         * Value of the field network.
+         */
+        public String network;
+        /**
+         * Value of the field generation.
+         */
+        public String generation;
+        /**
+         * Value of the field id.
+         */
+        public String id;
+        /**
+         * Value of the field component.
+         */
+        public String component;
+        /**
+         * Value of the field foundation.
+         */
+        public String foundation;
+        /**
+         * Value of the field priority.
+         */
+        public String priority;
+        /**
+         * Value of the field ip.
+         */
+        public String ip;
+        /**
+         * Value of the field type.
+         */
+        public String type;
+        /**
+         * Value of the field tcpType.
+         */
+        public String tcpType;
+        /**
+         * Value of the field relAddr.
+         */
+        public String relAddr;
+        /**
+         * Value of the field relPort.
+         */
+        public String relPort;
+
+        /**
+         * Describes a join response candidate for interaction with tgcalls.
+         */
+        public GroupCallJoinResponseCandidate() {
+        }
+
+        /**
+         * Describes a join response candidate for interaction with tgcalls.
+         *
+         * @param port Value of the field port.
+         * @param protocol Value of the field protocol.
+         * @param network Value of the field network.
+         * @param generation Value of the field generation.
+         * @param id Value of the field id.
+         * @param component Value of the field component.
+         * @param foundation Value of the field foundation.
+         * @param priority Value of the field priority.
+         * @param ip Value of the field ip.
+         * @param type Value of the field type.
+         * @param tcpType Value of the field tcpType.
+         * @param relAddr Value of the field relAddr.
+         * @param relPort Value of the field relPort.
+         */
+        public GroupCallJoinResponseCandidate(String port, String protocol, String network, String generation, String id, String component, String foundation, String priority, String ip, String type, String tcpType, String relAddr, String relPort) {
+            this.port = port;
+            this.protocol = protocol;
+            this.network = network;
+            this.generation = generation;
+            this.id = id;
+            this.component = component;
+            this.foundation = foundation;
+            this.priority = priority;
+            this.ip = ip;
+            this.type = type;
+            this.tcpType = tcpType;
+            this.relAddr = relAddr;
+            this.relPort = relPort;
+        }
+
+        /**
+         * Identifier uniquely determining type of the object.
+         */
+        public static final int CONSTRUCTOR = -769797407;
+
+        /**
+         * @return this.CONSTRUCTOR
+         */
+        @Override
+        public int getConstructor() {
+            return CONSTRUCTOR;
+        }
+    }
+
+    /**
+     * Represents a group call participant.
+     */
+    public static class GroupCallParticipant extends Object {
+        /**
+         * Identifier of the user.
+         */
+        public int userId;
+        /**
+         * User's synchronization source.
+         */
+        public int source;
+        /**
+         * True, if the participant is speaking as set by setGroupCallParticipantIsSpeaking.
+         */
+        public boolean isSpeaking;
+        /**
+         * True, if the current user can mute the participant.
+         */
+        public boolean canBeMuted;
+        /**
+         * True, if the current user can allow the participant to unmute themself or unmute the participant (only for self).
+         */
+        public boolean canBeUnmuted;
+        /**
+         * True, if the participant is muted.
+         */
+        public boolean isMuted;
+        /**
+         * True, if the participant can unmute themself.
+         */
+        public boolean canUnmuteSelf;
+        /**
+         * User's order in the group call participant list. The bigger is order, the higher is user in the list. If order is 0, the user must be removed from the participant list.
+         */
+        public long order;
+
+        /**
+         * Represents a group call participant.
+         */
+        public GroupCallParticipant() {
+        }
+
+        /**
+         * Represents a group call participant.
+         *
+         * @param userId Identifier of the user.
+         * @param source User's synchronization source.
+         * @param isSpeaking True, if the participant is speaking as set by setGroupCallParticipantIsSpeaking.
+         * @param canBeMuted True, if the current user can mute the participant.
+         * @param canBeUnmuted True, if the current user can allow the participant to unmute themself or unmute the participant (only for self).
+         * @param isMuted True, if the participant is muted.
+         * @param canUnmuteSelf True, if the participant can unmute themself.
+         * @param order User's order in the group call participant list. The bigger is order, the higher is user in the list. If order is 0, the user must be removed from the participant list.
+         */
+        public GroupCallParticipant(int userId, int source, boolean isSpeaking, boolean canBeMuted, boolean canBeUnmuted, boolean isMuted, boolean canUnmuteSelf, long order) {
+            this.userId = userId;
+            this.source = source;
+            this.isSpeaking = isSpeaking;
+            this.canBeMuted = canBeMuted;
+            this.canBeUnmuted = canBeUnmuted;
+            this.isMuted = isMuted;
+            this.canUnmuteSelf = canUnmuteSelf;
+            this.order = order;
+        }
+
+        /**
+         * Identifier uniquely determining type of the object.
+         */
+        public static final int CONSTRUCTOR = 149471862;
+
+        /**
+         * @return this.CONSTRUCTOR
+         */
+        @Override
+        public int getConstructor() {
+            return CONSTRUCTOR;
+        }
+    }
+
+    /**
+     * Describes a payload for interaction with tgcalls.
+     */
+    public static class GroupCallPayload extends Object {
+        /**
+         * Value of the field ufrag.
+         */
+        public String ufrag;
+        /**
+         * Value of the field pwd.
+         */
+        public String pwd;
+        /**
+         * The list of fingerprints.
+         */
+        public GroupCallPayloadFingerprint[] fingerprints;
+
+        /**
+         * Describes a payload for interaction with tgcalls.
+         */
+        public GroupCallPayload() {
+        }
+
+        /**
+         * Describes a payload for interaction with tgcalls.
+         *
+         * @param ufrag Value of the field ufrag.
+         * @param pwd Value of the field pwd.
+         * @param fingerprints The list of fingerprints.
+         */
+        public GroupCallPayload(String ufrag, String pwd, GroupCallPayloadFingerprint[] fingerprints) {
+            this.ufrag = ufrag;
+            this.pwd = pwd;
+            this.fingerprints = fingerprints;
+        }
+
+        /**
+         * Identifier uniquely determining type of the object.
+         */
+        public static final int CONSTRUCTOR = 2059487284;
+
+        /**
+         * @return this.CONSTRUCTOR
+         */
+        @Override
+        public int getConstructor() {
+            return CONSTRUCTOR;
+        }
+    }
+
+    /**
+     * Describes a payload fingerprint for interaction with tgcalls.
+     */
+    public static class GroupCallPayloadFingerprint extends Object {
+        /**
+         * Value of the field hash.
+         */
+        public String hash;
+        /**
+         * Value of the field setup.
+         */
+        public String setup;
+        /**
+         * Value of the field fingerprint.
+         */
+        public String fingerprint;
+
+        /**
+         * Describes a payload fingerprint for interaction with tgcalls.
+         */
+        public GroupCallPayloadFingerprint() {
+        }
+
+        /**
+         * Describes a payload fingerprint for interaction with tgcalls.
+         *
+         * @param hash Value of the field hash.
+         * @param setup Value of the field setup.
+         * @param fingerprint Value of the field fingerprint.
+         */
+        public GroupCallPayloadFingerprint(String hash, String setup, String fingerprint) {
+            this.hash = hash;
+            this.setup = setup;
+            this.fingerprint = fingerprint;
+        }
+
+        /**
+         * Identifier uniquely determining type of the object.
+         */
+        public static final int CONSTRUCTOR = -32269671;
+
+        /**
+         * @return this.CONSTRUCTOR
+         */
+        @Override
+        public int getConstructor() {
+            return CONSTRUCTOR;
+        }
+    }
+
+    /**
      * Contains a list of hashtags.
      */
     public static class Hashtags extends Object {
@@ -10197,7 +10893,7 @@ public class TdApi {
     }
 
     /**
-     * A button that opens a specified URL and automatically logs in in current user if they allowed to do that.
+     * A button that opens a specified URL and automatically authorize the current user if allowed to do so.
      */
     public static class InlineKeyboardButtonTypeLoginUrl extends InlineKeyboardButtonType {
         /**
@@ -10214,13 +10910,13 @@ public class TdApi {
         public String forwardText;
 
         /**
-         * A button that opens a specified URL and automatically logs in in current user if they allowed to do that.
+         * A button that opens a specified URL and automatically authorize the current user if allowed to do so.
          */
         public InlineKeyboardButtonTypeLoginUrl() {
         }
 
         /**
-         * A button that opens a specified URL and automatically logs in in current user if they allowed to do that.
+         * A button that opens a specified URL and automatically authorize the current user if allowed to do so.
          *
          * @param url An HTTP URL to open.
          * @param id Unique button identifier.
@@ -13045,6 +13741,10 @@ public class TdApi {
          * Sticker height.
          */
         public int height;
+        /**
+         * Emoji used to choose the sticker.
+         */
+        public String emoji;
 
         /**
          * A sticker message.
@@ -13059,18 +13759,20 @@ public class TdApi {
          * @param thumbnail Sticker thumbnail, if available.
          * @param width Sticker width.
          * @param height Sticker height.
+         * @param emoji Emoji used to choose the sticker.
          */
-        public InputMessageSticker(InputFile sticker, InputThumbnail thumbnail, int width, int height) {
+        public InputMessageSticker(InputFile sticker, InputThumbnail thumbnail, int width, int height, String emoji) {
             this.sticker = sticker;
             this.thumbnail = thumbnail;
             this.width = width;
             this.height = height;
+            this.emoji = emoji;
         }
 
         /**
          * Identifier uniquely determining type of the object.
          */
-        public static final int CONSTRUCTOR = 740776325;
+        public static final int CONSTRUCTOR = 1072805625;
 
         /**
          * @return this.CONSTRUCTOR
@@ -16460,7 +17162,7 @@ public class TdApi {
          */
         public String authorSignature;
         /**
-         * Unique identifier of an album this message belongs to. Only photos and videos can be grouped together in albums.
+         * Unique identifier of an album this message belongs to. Only audios, documents, photos and videos can be grouped together in albums.
          */
         public long mediaAlbumId;
         /**
@@ -16511,7 +17213,7 @@ public class TdApi {
          * @param ttlExpiresIn Time left before the message expires, in seconds.
          * @param viaBotUserId If non-zero, the user identifier of the bot through which this message was sent.
          * @param authorSignature For channel posts and anonymous group messages, optional author signature.
-         * @param mediaAlbumId Unique identifier of an album this message belongs to. Only photos and videos can be grouped together in albums.
+         * @param mediaAlbumId Unique identifier of an album this message belongs to. Only audios, documents, photos and videos can be grouped together in albums.
          * @param restrictionReason If non-empty, contains a human-readable description of the reason why access to this message must be restricted.
          * @param content Content of the message.
          * @param replyMarkup Reply markup for the message; may be null.
@@ -17442,6 +18144,126 @@ public class TdApi {
          * Identifier uniquely determining type of the object.
          */
         public static final int CONSTRUCTOR = 538893824;
+
+        /**
+         * @return this.CONSTRUCTOR
+         */
+        @Override
+        public int getConstructor() {
+            return CONSTRUCTOR;
+        }
+    }
+
+    /**
+     * A newly created voice chat.
+     */
+    public static class MessageVoiceChatStarted extends MessageContent {
+        /**
+         * Identifier of the voice chat. The voice chat can be received through the method getGroupCall.
+         */
+        public int groupCallId;
+
+        /**
+         * A newly created voice chat.
+         */
+        public MessageVoiceChatStarted() {
+        }
+
+        /**
+         * A newly created voice chat.
+         *
+         * @param groupCallId Identifier of the voice chat. The voice chat can be received through the method getGroupCall.
+         */
+        public MessageVoiceChatStarted(int groupCallId) {
+            this.groupCallId = groupCallId;
+        }
+
+        /**
+         * Identifier uniquely determining type of the object.
+         */
+        public static final int CONSTRUCTOR = -909274005;
+
+        /**
+         * @return this.CONSTRUCTOR
+         */
+        @Override
+        public int getConstructor() {
+            return CONSTRUCTOR;
+        }
+    }
+
+    /**
+     * A message with information about an ended voice chat.
+     */
+    public static class MessageVoiceChatEnded extends MessageContent {
+        /**
+         * Call duration.
+         */
+        public int duration;
+
+        /**
+         * A message with information about an ended voice chat.
+         */
+        public MessageVoiceChatEnded() {
+        }
+
+        /**
+         * A message with information about an ended voice chat.
+         *
+         * @param duration Call duration.
+         */
+        public MessageVoiceChatEnded(int duration) {
+            this.duration = duration;
+        }
+
+        /**
+         * Identifier uniquely determining type of the object.
+         */
+        public static final int CONSTRUCTOR = -678902089;
+
+        /**
+         * @return this.CONSTRUCTOR
+         */
+        @Override
+        public int getConstructor() {
+            return CONSTRUCTOR;
+        }
+    }
+
+    /**
+     * A message with information about an invite to a voice chat.
+     */
+    public static class MessageInviteVoiceChatParticipants extends MessageContent {
+        /**
+         * Identifier of the voice chat. The voice chat can be received through the method getGroupCall.
+         */
+        public int groupCallId;
+        /**
+         * Invited user identifiers.
+         */
+        public int[] userIds;
+
+        /**
+         * A message with information about an invite to a voice chat.
+         */
+        public MessageInviteVoiceChatParticipants() {
+        }
+
+        /**
+         * A message with information about an invite to a voice chat.
+         *
+         * @param groupCallId Identifier of the voice chat. The voice chat can be received through the method getGroupCall.
+         * @param userIds Invited user identifiers.
+         */
+        public MessageInviteVoiceChatParticipants(int groupCallId, int[] userIds) {
+            this.groupCallId = groupCallId;
+            this.userIds = userIds;
+        }
+
+        /**
+         * Identifier uniquely determining type of the object.
+         */
+        public static final int CONSTRUCTOR = 46546833;
 
         /**
          * @return this.CONSTRUCTOR
@@ -24143,6 +24965,50 @@ public class TdApi {
     }
 
     /**
+     * A point on a Cartesian plane.
+     */
+    public static class Point extends Object {
+        /**
+         * The point's first coordinate.
+         */
+        public double x;
+        /**
+         * The point's second coordinate.
+         */
+        public double y;
+
+        /**
+         * A point on a Cartesian plane.
+         */
+        public Point() {
+        }
+
+        /**
+         * A point on a Cartesian plane.
+         *
+         * @param x The point's first coordinate.
+         * @param y The point's second coordinate.
+         */
+        public Point(double x, double y) {
+            this.x = x;
+            this.y = y;
+        }
+
+        /**
+         * Identifier uniquely determining type of the object.
+         */
+        public static final int CONSTRUCTOR = 437515705;
+
+        /**
+         * @return this.CONSTRUCTOR
+         */
+        @Override
+        public int getConstructor() {
+            return CONSTRUCTOR;
+        }
+    }
+
+    /**
      * Describes a poll.
      */
     public static class Poll extends Object {
@@ -28146,6 +29012,10 @@ public class TdApi {
          */
         public MaskPosition maskPosition;
         /**
+         * Sticker's outline represented as a list of closed vector paths; may be empty. The coordinate system origin is in the upper-left corner.
+         */
+        public ClosedVectorPath[] outline;
+        /**
          * Sticker thumbnail in WEBP or JPEG format; may be null.
          */
         public Thumbnail thumbnail;
@@ -28170,10 +29040,11 @@ public class TdApi {
          * @param isAnimated True, if the sticker is an animated sticker in TGS format.
          * @param isMask True, if the sticker is a mask.
          * @param maskPosition Position where the mask should be placed; may be null.
+         * @param outline Sticker's outline represented as a list of closed vector paths; may be empty. The coordinate system origin is in the upper-left corner.
          * @param thumbnail Sticker thumbnail in WEBP or JPEG format; may be null.
          * @param sticker File containing the sticker.
          */
-        public Sticker(long setId, int width, int height, String emoji, boolean isAnimated, boolean isMask, MaskPosition maskPosition, Thumbnail thumbnail, File sticker) {
+        public Sticker(long setId, int width, int height, String emoji, boolean isAnimated, boolean isMask, MaskPosition maskPosition, ClosedVectorPath[] outline, Thumbnail thumbnail, File sticker) {
             this.setId = setId;
             this.width = width;
             this.height = height;
@@ -28181,6 +29052,7 @@ public class TdApi {
             this.isAnimated = isAnimated;
             this.isMask = isMask;
             this.maskPosition = maskPosition;
+            this.outline = outline;
             this.thumbnail = thumbnail;
             this.sticker = sticker;
         }
@@ -28188,7 +29060,7 @@ public class TdApi {
         /**
          * Identifier uniquely determining type of the object.
          */
-        public static final int CONSTRUCTOR = -692141937;
+        public static final int CONSTRUCTOR = 45883239;
 
         /**
          * @return this.CONSTRUCTOR
@@ -28219,6 +29091,10 @@ public class TdApi {
          * Sticker set thumbnail in WEBP or TGS format with width and height 100; may be null. The file can be downloaded only before the thumbnail is changed.
          */
         public Thumbnail thumbnail;
+        /**
+         * Sticker set thumbnail's outline represented as a list of closed vector paths; may be empty. The coordinate system origin is in the upper-left corner.
+         */
+        public ClosedVectorPath[] thumbnailOutline;
         /**
          * True, if the sticker set has been installed by the current user.
          */
@@ -28265,6 +29141,7 @@ public class TdApi {
          * @param title Title of the sticker set.
          * @param name Name of the sticker set.
          * @param thumbnail Sticker set thumbnail in WEBP or TGS format with width and height 100; may be null. The file can be downloaded only before the thumbnail is changed.
+         * @param thumbnailOutline Sticker set thumbnail's outline represented as a list of closed vector paths; may be empty. The coordinate system origin is in the upper-left corner.
          * @param isInstalled True, if the sticker set has been installed by the current user.
          * @param isArchived True, if the sticker set has been archived. A sticker set can't be installed and archived simultaneously.
          * @param isOfficial True, if the sticker set is official.
@@ -28274,11 +29151,12 @@ public class TdApi {
          * @param stickers List of stickers in this set.
          * @param emojis A list of emoji corresponding to the stickers in the same order. The list is only for informational purposes, because a sticker is always sent with a fixed emoji from the corresponding Sticker object.
          */
-        public StickerSet(long id, String title, String name, Thumbnail thumbnail, boolean isInstalled, boolean isArchived, boolean isOfficial, boolean isAnimated, boolean isMasks, boolean isViewed, Sticker[] stickers, Emojis[] emojis) {
+        public StickerSet(long id, String title, String name, Thumbnail thumbnail, ClosedVectorPath[] thumbnailOutline, boolean isInstalled, boolean isArchived, boolean isOfficial, boolean isAnimated, boolean isMasks, boolean isViewed, Sticker[] stickers, Emojis[] emojis) {
             this.id = id;
             this.title = title;
             this.name = name;
             this.thumbnail = thumbnail;
+            this.thumbnailOutline = thumbnailOutline;
             this.isInstalled = isInstalled;
             this.isArchived = isArchived;
             this.isOfficial = isOfficial;
@@ -28292,7 +29170,7 @@ public class TdApi {
         /**
          * Identifier uniquely determining type of the object.
          */
-        public static final int CONSTRUCTOR = 853438190;
+        public static final int CONSTRUCTOR = -79542167;
 
         /**
          * @return this.CONSTRUCTOR
@@ -28324,7 +29202,11 @@ public class TdApi {
          */
         public Thumbnail thumbnail;
         /**
-         * True, if the sticker set has been installed by current user.
+         * Sticker set thumbnail's outline represented as a list of closed vector paths; may be empty. The coordinate system origin is in the upper-left corner.
+         */
+        public ClosedVectorPath[] thumbnailOutline;
+        /**
+         * True, if the sticker set has been installed by the current user.
          */
         public boolean isInstalled;
         /**
@@ -28369,7 +29251,8 @@ public class TdApi {
          * @param title Title of the sticker set.
          * @param name Name of the sticker set.
          * @param thumbnail Sticker set thumbnail in WEBP or TGS format with width and height 100; may be null.
-         * @param isInstalled True, if the sticker set has been installed by current user.
+         * @param thumbnailOutline Sticker set thumbnail's outline represented as a list of closed vector paths; may be empty. The coordinate system origin is in the upper-left corner.
+         * @param isInstalled True, if the sticker set has been installed by the current user.
          * @param isArchived True, if the sticker set has been archived. A sticker set can't be installed and archived simultaneously.
          * @param isOfficial True, if the sticker set is official.
          * @param isAnimated True, is the stickers in the set are animated.
@@ -28378,11 +29261,12 @@ public class TdApi {
          * @param size Total number of stickers in the set.
          * @param covers Contains up to the first 5 stickers from the set, depending on the context. If the application needs more stickers the full set should be requested.
          */
-        public StickerSetInfo(long id, String title, String name, Thumbnail thumbnail, boolean isInstalled, boolean isArchived, boolean isOfficial, boolean isAnimated, boolean isMasks, boolean isViewed, int size, Sticker[] covers) {
+        public StickerSetInfo(long id, String title, String name, Thumbnail thumbnail, ClosedVectorPath[] thumbnailOutline, boolean isInstalled, boolean isArchived, boolean isOfficial, boolean isAnimated, boolean isMasks, boolean isViewed, int size, Sticker[] covers) {
             this.id = id;
             this.title = title;
             this.name = name;
             this.thumbnail = thumbnail;
+            this.thumbnailOutline = thumbnailOutline;
             this.isInstalled = isInstalled;
             this.isArchived = isArchived;
             this.isOfficial = isOfficial;
@@ -28396,7 +29280,7 @@ public class TdApi {
         /**
          * Identifier uniquely determining type of the object.
          */
-        public static final int CONSTRUCTOR = 703844215;
+        public static final int CONSTRUCTOR = 1307322248;
 
         /**
          * @return this.CONSTRUCTOR
@@ -32057,6 +32941,56 @@ public class TdApi {
     }
 
     /**
+     * A chat voice chat state has changed.
+     */
+    public static class UpdateChatVoiceChat extends Update {
+        /**
+         * Chat identifier.
+         */
+        public long chatId;
+        /**
+         * New value of voiceChatGroupCallId.
+         */
+        public int voiceChatGroupCallId;
+        /**
+         * New value of isVoiceChatEmpty.
+         */
+        public boolean isVoiceChatEmpty;
+
+        /**
+         * A chat voice chat state has changed.
+         */
+        public UpdateChatVoiceChat() {
+        }
+
+        /**
+         * A chat voice chat state has changed.
+         *
+         * @param chatId Chat identifier.
+         * @param voiceChatGroupCallId New value of voiceChatGroupCallId.
+         * @param isVoiceChatEmpty New value of isVoiceChatEmpty.
+         */
+        public UpdateChatVoiceChat(long chatId, int voiceChatGroupCallId, boolean isVoiceChatEmpty) {
+            this.chatId = chatId;
+            this.voiceChatGroupCallId = voiceChatGroupCallId;
+            this.isVoiceChatEmpty = isVoiceChatEmpty;
+        }
+
+        /**
+         * Identifier uniquely determining type of the object.
+         */
+        public static final int CONSTRUCTOR = 1432971820;
+
+        /**
+         * @return this.CONSTRUCTOR
+         */
+        @Override
+        public int getConstructor() {
+            return CONSTRUCTOR;
+        }
+    }
+
+    /**
      * The value of the default disableNotification parameter, used when a message is sent to the chat, was changed.
      */
     public static class UpdateChatDefaultDisableNotification extends Update {
@@ -33407,6 +34341,88 @@ public class TdApi {
     }
 
     /**
+     * Information about a group call was updated.
+     */
+    public static class UpdateGroupCall extends Update {
+        /**
+         * New data about a group call.
+         */
+        public GroupCall groupCall;
+
+        /**
+         * Information about a group call was updated.
+         */
+        public UpdateGroupCall() {
+        }
+
+        /**
+         * Information about a group call was updated.
+         *
+         * @param groupCall New data about a group call.
+         */
+        public UpdateGroupCall(GroupCall groupCall) {
+            this.groupCall = groupCall;
+        }
+
+        /**
+         * Identifier uniquely determining type of the object.
+         */
+        public static final int CONSTRUCTOR = 808603136;
+
+        /**
+         * @return this.CONSTRUCTOR
+         */
+        @Override
+        public int getConstructor() {
+            return CONSTRUCTOR;
+        }
+    }
+
+    /**
+     * Information about a group call participant was changed. The updates are sent only after the group call is received through getGroupCall and only if the call is joined or being joined.
+     */
+    public static class UpdateGroupCallParticipant extends Update {
+        /**
+         * Identifier of group call.
+         */
+        public int groupCallId;
+        /**
+         * New data about a participant.
+         */
+        public GroupCallParticipant participant;
+
+        /**
+         * Information about a group call participant was changed. The updates are sent only after the group call is received through getGroupCall and only if the call is joined or being joined.
+         */
+        public UpdateGroupCallParticipant() {
+        }
+
+        /**
+         * Information about a group call participant was changed. The updates are sent only after the group call is received through getGroupCall and only if the call is joined or being joined.
+         *
+         * @param groupCallId Identifier of group call.
+         * @param participant New data about a participant.
+         */
+        public UpdateGroupCallParticipant(int groupCallId, GroupCallParticipant participant) {
+            this.groupCallId = groupCallId;
+            this.participant = participant;
+        }
+
+        /**
+         * Identifier uniquely determining type of the object.
+         */
+        public static final int CONSTRUCTOR = -803128071;
+
+        /**
+         * @return this.CONSTRUCTOR
+         */
+        @Override
+        public int getConstructor() {
+            return CONSTRUCTOR;
+        }
+    }
+
+    /**
      * New call signaling data arrived.
      */
     public static class UpdateNewCallSignalingData extends Update {
@@ -34253,6 +35269,10 @@ public class TdApi {
          */
         public Location userLocation;
         /**
+         * Contains information about the type of the chat, from which the query originated; may be null if unknown.
+         */
+        public ChatType chatType;
+        /**
          * Text of the query.
          */
         public String query;
@@ -34273,13 +35293,15 @@ public class TdApi {
          * @param id Unique query identifier.
          * @param senderUserId Identifier of the user who sent the query.
          * @param userLocation User location; may be null.
+         * @param chatType Contains information about the type of the chat, from which the query originated; may be null if unknown.
          * @param query Text of the query.
          * @param offset Offset of the first entry to return.
          */
-        public UpdateNewInlineQuery(long id, int senderUserId, Location userLocation, String query, String offset) {
+        public UpdateNewInlineQuery(long id, int senderUserId, Location userLocation, ChatType chatType, String query, String offset) {
             this.id = id;
             this.senderUserId = senderUserId;
             this.userLocation = userLocation;
+            this.chatType = chatType;
             this.query = query;
             this.offset = offset;
         }
@@ -34287,7 +35309,7 @@ public class TdApi {
         /**
          * Identifier uniquely determining type of the object.
          */
-        public static final int CONSTRUCTOR = 2064730634;
+        public static final int CONSTRUCTOR = 1918474267;
 
         /**
          * @return this.CONSTRUCTOR
@@ -35974,6 +36996,101 @@ public class TdApi {
     }
 
     /**
+     * This class is an abstract base class.
+     * Represents a vector path command.
+     */
+    public abstract static class VectorPathCommand extends Object {
+    }
+
+    /**
+     * A straight line to a given point.
+     */
+    public static class VectorPathCommandLine extends VectorPathCommand {
+        /**
+         * The end point of the straight line.
+         */
+        public Point endPoint;
+
+        /**
+         * A straight line to a given point.
+         */
+        public VectorPathCommandLine() {
+        }
+
+        /**
+         * A straight line to a given point.
+         *
+         * @param endPoint The end point of the straight line.
+         */
+        public VectorPathCommandLine(Point endPoint) {
+            this.endPoint = endPoint;
+        }
+
+        /**
+         * Identifier uniquely determining type of the object.
+         */
+        public static final int CONSTRUCTOR = -614056822;
+
+        /**
+         * @return this.CONSTRUCTOR
+         */
+        @Override
+        public int getConstructor() {
+            return CONSTRUCTOR;
+        }
+    }
+
+    /**
+     * A cubic Bézier curve to a given point.
+     */
+    public static class VectorPathCommandCubicBezierCurve extends VectorPathCommand {
+        /**
+         * The start control point of the curve.
+         */
+        public Point startControlPoint;
+        /**
+         * The end control point of the curve.
+         */
+        public Point endControlPoint;
+        /**
+         * The end point of the curve.
+         */
+        public Point endPoint;
+
+        /**
+         * A cubic Bézier curve to a given point.
+         */
+        public VectorPathCommandCubicBezierCurve() {
+        }
+
+        /**
+         * A cubic Bézier curve to a given point.
+         *
+         * @param startControlPoint The start control point of the curve.
+         * @param endControlPoint The end control point of the curve.
+         * @param endPoint The end point of the curve.
+         */
+        public VectorPathCommandCubicBezierCurve(Point startControlPoint, Point endControlPoint, Point endPoint) {
+            this.startControlPoint = startControlPoint;
+            this.endControlPoint = endControlPoint;
+            this.endPoint = endPoint;
+        }
+
+        /**
+         * Identifier uniquely determining type of the object.
+         */
+        public static final int CONSTRUCTOR = 1229733434;
+
+        /**
+         * @return this.CONSTRUCTOR
+         */
+        @Override
+        public int getConstructor() {
+            return CONSTRUCTOR;
+        }
+    }
+
+    /**
      * Describes a venue.
      */
     public static class Venue extends Object {
@@ -36622,7 +37739,7 @@ public class TdApi {
     }
 
     /**
-     * Adds multiple new members to a chat. Currently this option is only available for supergroups and channels. This option can't be used to join a chat. Members can't be added to a channel if it has more than 200 members. Members will not be added until the chat state has been synchronized with the server.
+     * Adds multiple new members to a chat. Currently this method is only available for supergroups and channels. This method can't be used to join a chat. Members can't be added to a channel if it has more than 200 members. Members will not be added until the chat state has been synchronized with the server.
      *
      * <p> Returns {@link Ok Ok} </p>
      */
@@ -36632,12 +37749,12 @@ public class TdApi {
          */
         public long chatId;
         /**
-         * Identifiers of the users to be added to the chat.
+         * Identifiers of the users to be added to the chat. The maximum number of added users is 20 for supergroups and 100 for channels.
          */
         public int[] userIds;
 
         /**
-         * Default constructor for a function, which adds multiple new members to a chat. Currently this option is only available for supergroups and channels. This option can't be used to join a chat. Members can't be added to a channel if it has more than 200 members. Members will not be added until the chat state has been synchronized with the server.
+         * Default constructor for a function, which adds multiple new members to a chat. Currently this method is only available for supergroups and channels. This method can't be used to join a chat. Members can't be added to a channel if it has more than 200 members. Members will not be added until the chat state has been synchronized with the server.
          *
          * <p> Returns {@link Ok Ok} </p>
          */
@@ -36645,12 +37762,12 @@ public class TdApi {
         }
 
         /**
-         * Creates a function, which adds multiple new members to a chat. Currently this option is only available for supergroups and channels. This option can't be used to join a chat. Members can't be added to a channel if it has more than 200 members. Members will not be added until the chat state has been synchronized with the server.
+         * Creates a function, which adds multiple new members to a chat. Currently this method is only available for supergroups and channels. This method can't be used to join a chat. Members can't be added to a channel if it has more than 200 members. Members will not be added until the chat state has been synchronized with the server.
          *
          * <p> Returns {@link Ok Ok} </p>
          *
          * @param chatId Chat identifier.
-         * @param userIds Identifiers of the users to be added to the chat.
+         * @param userIds Identifiers of the users to be added to the chat. The maximum number of added users is 20 for supergroups and 100 for channels.
          */
         public AddChatMembers(long chatId, int[] userIds) {
             this.chatId = chatId;
@@ -37767,7 +38884,7 @@ public class TdApi {
     }
 
     /**
-     * Changes imported contacts using the list of current user contacts saved on the device. Imports newly added contacts and, if at least the file database is enabled, deletes recently deleted contacts. Query result depends on the result of the previous query, so only one query is possible at the same time.
+     * Changes imported contacts using the list of contacts saved on the device. Imports newly added contacts and, if at least the file database is enabled, deletes recently deleted contacts. Query result depends on the result of the previous query, so only one query is possible at the same time.
      *
      * <p> Returns {@link ImportedContacts ImportedContacts} </p>
      */
@@ -37778,7 +38895,7 @@ public class TdApi {
         public Contact[] contacts;
 
         /**
-         * Default constructor for a function, which changes imported contacts using the list of current user contacts saved on the device. Imports newly added contacts and, if at least the file database is enabled, deletes recently deleted contacts. Query result depends on the result of the previous query, so only one query is possible at the same time.
+         * Default constructor for a function, which changes imported contacts using the list of contacts saved on the device. Imports newly added contacts and, if at least the file database is enabled, deletes recently deleted contacts. Query result depends on the result of the previous query, so only one query is possible at the same time.
          *
          * <p> Returns {@link ImportedContacts ImportedContacts} </p>
          */
@@ -37786,7 +38903,7 @@ public class TdApi {
         }
 
         /**
-         * Creates a function, which changes imported contacts using the list of current user contacts saved on the device. Imports newly added contacts and, if at least the file database is enabled, deletes recently deleted contacts. Query result depends on the result of the previous query, so only one query is possible at the same time.
+         * Creates a function, which changes imported contacts using the list of contacts saved on the device. Imports newly added contacts and, if at least the file database is enabled, deletes recently deleted contacts. Query result depends on the result of the previous query, so only one query is possible at the same time.
          *
          * <p> Returns {@link ImportedContacts ImportedContacts} </p>
          *
@@ -38308,6 +39425,50 @@ public class TdApi {
          * Identifier uniquely determining type of the object.
          */
         public static final int CONSTRUCTOR = -426386685;
+
+        /**
+         * @return this.CONSTRUCTOR
+         */
+        @Override
+        public int getConstructor() {
+            return CONSTRUCTOR;
+        }
+    }
+
+    /**
+     * Checks whether a group call is still joined. Should be called every 10 seconds when tgcalls notifies about lost connection with the server.
+     *
+     * <p> Returns {@link Ok Ok} </p>
+     */
+    public static class CheckGroupCallIsJoined extends Function {
+        /**
+         * Group call identifier.
+         */
+        public int groupCallId;
+
+        /**
+         * Default constructor for a function, which checks whether a group call is still joined. Should be called every 10 seconds when tgcalls notifies about lost connection with the server.
+         *
+         * <p> Returns {@link Ok Ok} </p>
+         */
+        public CheckGroupCallIsJoined() {
+        }
+
+        /**
+         * Creates a function, which checks whether a group call is still joined. Should be called every 10 seconds when tgcalls notifies about lost connection with the server.
+         *
+         * <p> Returns {@link Ok Ok} </p>
+         *
+         * @param groupCallId Group call identifier.
+         */
+        public CheckGroupCallIsJoined(int groupCallId) {
+            this.groupCallId = groupCallId;
+        }
+
+        /**
+         * Identifier uniquely determining type of the object.
+         */
+        public static final int CONSTRUCTOR = 1657344632;
 
         /**
          * @return this.CONSTRUCTOR
@@ -39370,6 +40531,50 @@ public class TdApi {
     }
 
     /**
+     * Creates a voice chat (a group call bound to a chat). Available only for basic groups and supergroups; requires canManageVoiceChats rights.
+     *
+     * <p> Returns {@link GroupCallId GroupCallId} </p>
+     */
+    public static class CreateVoiceChat extends Function {
+        /**
+         * Chat identifier.
+         */
+        public long chatId;
+
+        /**
+         * Default constructor for a function, which creates a voice chat (a group call bound to a chat). Available only for basic groups and supergroups; requires canManageVoiceChats rights.
+         *
+         * <p> Returns {@link GroupCallId GroupCallId} </p>
+         */
+        public CreateVoiceChat() {
+        }
+
+        /**
+         * Creates a function, which creates a voice chat (a group call bound to a chat). Available only for basic groups and supergroups; requires canManageVoiceChats rights.
+         *
+         * <p> Returns {@link GroupCallId GroupCallId} </p>
+         *
+         * @param chatId Chat identifier.
+         */
+        public CreateVoiceChat(long chatId) {
+            this.chatId = chatId;
+        }
+
+        /**
+         * Identifier uniquely determining type of the object.
+         */
+        public static final int CONSTRUCTOR = -1741671450;
+
+        /**
+         * @return this.CONSTRUCTOR
+         */
+        @Override
+        public int getConstructor() {
+            return CONSTRUCTOR;
+        }
+    }
+
+    /**
      * Deletes the account of the current user, deleting all information associated with the user from the server. The phone number of the account can be used to create a new account. Can be called before authorization when the current authorization state is authorizationStateWaitPassword.
      *
      * <p> Returns {@link Ok Ok} </p>
@@ -40063,6 +41268,50 @@ public class TdApi {
          * Identifier uniquely determining type of the object.
          */
         public static final int CONSTRUCTOR = -1784044162;
+
+        /**
+         * @return this.CONSTRUCTOR
+         */
+        @Override
+        public int getConstructor() {
+            return CONSTRUCTOR;
+        }
+    }
+
+    /**
+     * Discards a group call. Requires canManageVoiceChats rights in the corresponding chat.
+     *
+     * <p> Returns {@link Ok Ok} </p>
+     */
+    public static class DiscardGroupCall extends Function {
+        /**
+         * Group call identifier.
+         */
+        public int groupCallId;
+
+        /**
+         * Default constructor for a function, which discards a group call. Requires canManageVoiceChats rights in the corresponding chat.
+         *
+         * <p> Returns {@link Ok Ok} </p>
+         */
+        public DiscardGroupCall() {
+        }
+
+        /**
+         * Creates a function, which discards a group call. Requires canManageVoiceChats rights in the corresponding chat.
+         *
+         * <p> Returns {@link Ok Ok} </p>
+         *
+         * @param groupCallId Group call identifier.
+         */
+        public DiscardGroupCall(int groupCallId) {
+            this.groupCallId = groupCallId;
+        }
+
+        /**
+         * Identifier uniquely determining type of the object.
+         */
+        public static final int CONSTRUCTOR = 833933657;
 
         /**
          * @return this.CONSTRUCTOR
@@ -41143,7 +42392,7 @@ public class TdApi {
          */
         public long fromChatId;
         /**
-         * Identifiers of the messages to forward. Message identifiers must be in a strictly increasing order.
+         * Identifiers of the messages to forward. Message identifiers must be in a strictly increasing order. At most 100 messages can be forwarded simultaneously.
          */
         public long[] messageIds;
         /**
@@ -41174,7 +42423,7 @@ public class TdApi {
          *
          * @param chatId Identifier of the chat to which to forward messages.
          * @param fromChatId Identifier of the chat from which to forward messages.
-         * @param messageIds Identifiers of the messages to forward. Message identifiers must be in a strictly increasing order.
+         * @param messageIds Identifiers of the messages to forward. Message identifiers must be in a strictly increasing order. At most 100 messages can be forwarded simultaneously.
          * @param options Options to be used to send the messages.
          * @param sendCopy True, if content of the messages needs to be copied without links to the original messages. Always true if the messages are forwarded to a secret chat.
          * @param removeCaption True, if media caption of message copies needs to be removed. Ignored if sendCopy is false.
@@ -42864,14 +44113,14 @@ public class TdApi {
     }
 
     /**
-     * Uses current user IP address to find their country. Returns two-letter ISO 3166-1 alpha-2 country code. Can be called before authorization.
+     * Uses the current IP address to find the current country. Returns two-letter ISO 3166-1 alpha-2 country code. Can be called before authorization.
      *
      * <p> Returns {@link Text Text} </p>
      */
     public static class GetCountryCode extends Function {
 
         /**
-         * Default constructor for a function, which uses current user IP address to find their country. Returns two-letter ISO 3166-1 alpha-2 country code. Can be called before authorization.
+         * Default constructor for a function, which uses the current IP address to find the current country. Returns two-letter ISO 3166-1 alpha-2 country code. Can be called before authorization.
          *
          * <p> Returns {@link Text Text} </p>
          */
@@ -43339,6 +44588,50 @@ public class TdApi {
          * Identifier uniquely determining type of the object.
          */
         public static final int CONSTRUCTOR = 1920923753;
+
+        /**
+         * @return this.CONSTRUCTOR
+         */
+        @Override
+        public int getConstructor() {
+            return CONSTRUCTOR;
+        }
+    }
+
+    /**
+     * Returns information about a group call.
+     *
+     * <p> Returns {@link GroupCall GroupCall} </p>
+     */
+    public static class GetGroupCall extends Function {
+        /**
+         * Group call identifier.
+         */
+        public int groupCallId;
+
+        /**
+         * Default constructor for a function, which returns information about a group call.
+         *
+         * <p> Returns {@link GroupCall GroupCall} </p>
+         */
+        public GetGroupCall() {
+        }
+
+        /**
+         * Creates a function, which returns information about a group call.
+         *
+         * <p> Returns {@link GroupCall GroupCall} </p>
+         *
+         * @param groupCallId Group call identifier.
+         */
+        public GetGroupCall(int groupCallId) {
+            this.groupCallId = groupCallId;
+        }
+
+        /**
+         * Identifier uniquely determining type of the object.
+         */
+        public static final int CONSTRUCTOR = 1468491406;
 
         /**
          * @return this.CONSTRUCTOR
@@ -46993,7 +48286,57 @@ public class TdApi {
     }
 
     /**
-     * Adds current user as a new member to a chat. Private and secret chats can't be joined using this method.
+     * Invites users to a group call. Sends a service message of type messageInviteToGroupCall for voice chats.
+     *
+     * <p> Returns {@link Ok Ok} </p>
+     */
+    public static class InviteGroupCallParticipants extends Function {
+        /**
+         * Group call identifier.
+         */
+        public int groupCallId;
+        /**
+         * User identifiers. At most 10 users can be invited simultaneously.
+         */
+        public int[] userIds;
+
+        /**
+         * Default constructor for a function, which invites users to a group call. Sends a service message of type messageInviteToGroupCall for voice chats.
+         *
+         * <p> Returns {@link Ok Ok} </p>
+         */
+        public InviteGroupCallParticipants() {
+        }
+
+        /**
+         * Creates a function, which invites users to a group call. Sends a service message of type messageInviteToGroupCall for voice chats.
+         *
+         * <p> Returns {@link Ok Ok} </p>
+         *
+         * @param groupCallId Group call identifier.
+         * @param userIds User identifiers. At most 10 users can be invited simultaneously.
+         */
+        public InviteGroupCallParticipants(int groupCallId, int[] userIds) {
+            this.groupCallId = groupCallId;
+            this.userIds = userIds;
+        }
+
+        /**
+         * Identifier uniquely determining type of the object.
+         */
+        public static final int CONSTRUCTOR = -943374128;
+
+        /**
+         * @return this.CONSTRUCTOR
+         */
+        @Override
+        public int getConstructor() {
+            return CONSTRUCTOR;
+        }
+    }
+
+    /**
+     * Adds the current user as a new member to a chat. Private and secret chats can't be joined using this method.
      *
      * <p> Returns {@link Ok Ok} </p>
      */
@@ -47004,7 +48347,7 @@ public class TdApi {
         public long chatId;
 
         /**
-         * Default constructor for a function, which adds current user as a new member to a chat. Private and secret chats can't be joined using this method.
+         * Default constructor for a function, which adds the current user as a new member to a chat. Private and secret chats can't be joined using this method.
          *
          * <p> Returns {@link Ok Ok} </p>
          */
@@ -47012,7 +48355,7 @@ public class TdApi {
         }
 
         /**
-         * Creates a function, which adds current user as a new member to a chat. Private and secret chats can't be joined using this method.
+         * Creates a function, which adds the current user as a new member to a chat. Private and secret chats can't be joined using this method.
          *
          * <p> Returns {@link Ok Ok} </p>
          *
@@ -47081,7 +48424,69 @@ public class TdApi {
     }
 
     /**
-     * Removes current user from chat members. Private and secret chats can't be left using this method.
+     * Joins a group call.
+     *
+     * <p> Returns {@link GroupCallJoinResponse GroupCallJoinResponse} </p>
+     */
+    public static class JoinGroupCall extends Function {
+        /**
+         * Group call identifier.
+         */
+        public int groupCallId;
+        /**
+         * Group join payload, received from tgcalls. Use null to cancel previous joinGroupCall request.
+         */
+        public GroupCallPayload payload;
+        /**
+         * Caller synchronization source identifier; received from tgcalls.
+         */
+        public int source;
+        /**
+         * True, if the user's microphone is muted.
+         */
+        public boolean isMuted;
+
+        /**
+         * Default constructor for a function, which joins a group call.
+         *
+         * <p> Returns {@link GroupCallJoinResponse GroupCallJoinResponse} </p>
+         */
+        public JoinGroupCall() {
+        }
+
+        /**
+         * Creates a function, which joins a group call.
+         *
+         * <p> Returns {@link GroupCallJoinResponse GroupCallJoinResponse} </p>
+         *
+         * @param groupCallId Group call identifier.
+         * @param payload Group join payload, received from tgcalls. Use null to cancel previous joinGroupCall request.
+         * @param source Caller synchronization source identifier; received from tgcalls.
+         * @param isMuted True, if the user's microphone is muted.
+         */
+        public JoinGroupCall(int groupCallId, GroupCallPayload payload, int source, boolean isMuted) {
+            this.groupCallId = groupCallId;
+            this.payload = payload;
+            this.source = source;
+            this.isMuted = isMuted;
+        }
+
+        /**
+         * Identifier uniquely determining type of the object.
+         */
+        public static final int CONSTRUCTOR = -295363385;
+
+        /**
+         * @return this.CONSTRUCTOR
+         */
+        @Override
+        public int getConstructor() {
+            return CONSTRUCTOR;
+        }
+    }
+
+    /**
+     * Removes the current user from chat members. Private and secret chats can't be left using this method.
      *
      * <p> Returns {@link Ok Ok} </p>
      */
@@ -47092,7 +48497,7 @@ public class TdApi {
         public long chatId;
 
         /**
-         * Default constructor for a function, which removes current user from chat members. Private and secret chats can't be left using this method.
+         * Default constructor for a function, which removes the current user from chat members. Private and secret chats can't be left using this method.
          *
          * <p> Returns {@link Ok Ok} </p>
          */
@@ -47100,7 +48505,7 @@ public class TdApi {
         }
 
         /**
-         * Creates a function, which removes current user from chat members. Private and secret chats can't be left using this method.
+         * Creates a function, which removes the current user from chat members. Private and secret chats can't be left using this method.
          *
          * <p> Returns {@link Ok Ok} </p>
          *
@@ -47114,6 +48519,100 @@ public class TdApi {
          * Identifier uniquely determining type of the object.
          */
         public static final int CONSTRUCTOR = -1825080735;
+
+        /**
+         * @return this.CONSTRUCTOR
+         */
+        @Override
+        public int getConstructor() {
+            return CONSTRUCTOR;
+        }
+    }
+
+    /**
+     * Leaves a group call.
+     *
+     * <p> Returns {@link Ok Ok} </p>
+     */
+    public static class LeaveGroupCall extends Function {
+        /**
+         * Group call identifier.
+         */
+        public int groupCallId;
+
+        /**
+         * Default constructor for a function, which leaves a group call.
+         *
+         * <p> Returns {@link Ok Ok} </p>
+         */
+        public LeaveGroupCall() {
+        }
+
+        /**
+         * Creates a function, which leaves a group call.
+         *
+         * <p> Returns {@link Ok Ok} </p>
+         *
+         * @param groupCallId Group call identifier.
+         */
+        public LeaveGroupCall(int groupCallId) {
+            this.groupCallId = groupCallId;
+        }
+
+        /**
+         * Identifier uniquely determining type of the object.
+         */
+        public static final int CONSTRUCTOR = 980152233;
+
+        /**
+         * @return this.CONSTRUCTOR
+         */
+        @Override
+        public int getConstructor() {
+            return CONSTRUCTOR;
+        }
+    }
+
+    /**
+     * Loads more group call participants. The loaded participants will be received through updates. Use the field groupCall.loadedAllParticipants to check whether all participants has already been loaded.
+     *
+     * <p> Returns {@link Ok Ok} </p>
+     */
+    public static class LoadGroupCallParticipants extends Function {
+        /**
+         * Group call identifier. The group call must be previously received through getGroupCall and must be joined or being joined.
+         */
+        public int groupCallId;
+        /**
+         * Maximum number of participants to load.
+         */
+        public int limit;
+
+        /**
+         * Default constructor for a function, which loads more group call participants. The loaded participants will be received through updates. Use the field groupCall.loadedAllParticipants to check whether all participants has already been loaded.
+         *
+         * <p> Returns {@link Ok Ok} </p>
+         */
+        public LoadGroupCallParticipants() {
+        }
+
+        /**
+         * Creates a function, which loads more group call participants. The loaded participants will be received through updates. Use the field groupCall.loadedAllParticipants to check whether all participants has already been loaded.
+         *
+         * <p> Returns {@link Ok Ok} </p>
+         *
+         * @param groupCallId Group call identifier. The group call must be previously received through getGroupCall and must be joined or being joined.
+         * @param limit Maximum number of participants to load.
+         */
+        public LoadGroupCallParticipants(int groupCallId, int limit) {
+            this.groupCallId = groupCallId;
+            this.limit = limit;
+        }
+
+        /**
+         * Identifier uniquely determining type of the object.
+         */
+        public static final int CONSTRUCTOR = 938720974;
 
         /**
          * @return this.CONSTRUCTOR
@@ -50799,7 +52298,7 @@ public class TdApi {
     }
 
     /**
-     * Sends messages grouped together into an album. Currently only audio, document, photo and video messages can be grouped into an album. Documents and audio files can be only grouped in an album with messages of the same type. Returns sent messages.
+     * Sends 2-10 messages grouped together into an album. Currently only audio, document, photo and video messages can be grouped into an album. Documents and audio files can be only grouped in an album with messages of the same type. Returns sent messages.
      *
      * <p> Returns {@link Messages Messages} </p>
      */
@@ -50821,12 +52320,12 @@ public class TdApi {
          */
         public MessageSendOptions options;
         /**
-         * Contents of messages to be sent.
+         * Contents of messages to be sent. At most 10 messages can be added to an album.
          */
         public InputMessageContent[] inputMessageContents;
 
         /**
-         * Default constructor for a function, which sends messages grouped together into an album. Currently only audio, document, photo and video messages can be grouped into an album. Documents and audio files can be only grouped in an album with messages of the same type. Returns sent messages.
+         * Default constructor for a function, which sends 2-10 messages grouped together into an album. Currently only audio, document, photo and video messages can be grouped into an album. Documents and audio files can be only grouped in an album with messages of the same type. Returns sent messages.
          *
          * <p> Returns {@link Messages Messages} </p>
          */
@@ -50834,7 +52333,7 @@ public class TdApi {
         }
 
         /**
-         * Creates a function, which sends messages grouped together into an album. Currently only audio, document, photo and video messages can be grouped into an album. Documents and audio files can be only grouped in an album with messages of the same type. Returns sent messages.
+         * Creates a function, which sends 2-10 messages grouped together into an album. Currently only audio, document, photo and video messages can be grouped into an album. Documents and audio files can be only grouped in an album with messages of the same type. Returns sent messages.
          *
          * <p> Returns {@link Messages Messages} </p>
          *
@@ -50842,7 +52341,7 @@ public class TdApi {
          * @param messageThreadId If not 0, a message thread identifier in which the messages will be sent.
          * @param replyToMessageId Identifier of a message to reply to or 0.
          * @param options Options to be used to send the messages.
-         * @param inputMessageContents Contents of messages to be sent.
+         * @param inputMessageContents Contents of messages to be sent. At most 10 messages can be added to an album.
          */
         public SendMessageAlbum(long chatId, long messageThreadId, long replyToMessageId, MessageSendOptions options, InputMessageContent[] inputMessageContents) {
             this.chatId = chatId;
@@ -52298,6 +53797,62 @@ public class TdApi {
          * Identifier uniquely determining type of the object.
          */
         public static final int CONSTRUCTOR = -1768307069;
+
+        /**
+         * @return this.CONSTRUCTOR
+         */
+        @Override
+        public int getConstructor() {
+            return CONSTRUCTOR;
+        }
+    }
+
+    /**
+     * Informs TDLib that a group call participant speaking state has changed.
+     *
+     * <p> Returns {@link Ok Ok} </p>
+     */
+    public static class SetGroupCallParticipantIsSpeaking extends Function {
+        /**
+         * Group call identifier.
+         */
+        public int groupCallId;
+        /**
+         * Group call participant's synchronization source identifier, or 0 for the current user.
+         */
+        public int source;
+        /**
+         * True, if the user is speaking.
+         */
+        public boolean isSpeaking;
+
+        /**
+         * Default constructor for a function, which informs TDLib that a group call participant speaking state has changed.
+         *
+         * <p> Returns {@link Ok Ok} </p>
+         */
+        public SetGroupCallParticipantIsSpeaking() {
+        }
+
+        /**
+         * Creates a function, which informs TDLib that a group call participant speaking state has changed.
+         *
+         * <p> Returns {@link Ok Ok} </p>
+         *
+         * @param groupCallId Group call identifier.
+         * @param source Group call participant's synchronization source identifier, or 0 for the current user.
+         * @param isSpeaking True, if the user is speaking.
+         */
+        public SetGroupCallParticipantIsSpeaking(int groupCallId, int source, boolean isSpeaking) {
+            this.groupCallId = groupCallId;
+            this.source = source;
+            this.isSpeaking = isSpeaking;
+        }
+
+        /**
+         * Identifier uniquely determining type of the object.
+         */
+        public static final int CONSTRUCTOR = -1032120655;
 
         /**
          * @return this.CONSTRUCTOR
@@ -54363,6 +55918,112 @@ public class TdApi {
          * Identifier uniquely determining type of the object.
          */
         public static final int CONSTRUCTOR = -1485429186;
+
+        /**
+         * @return this.CONSTRUCTOR
+         */
+        @Override
+        public int getConstructor() {
+            return CONSTRUCTOR;
+        }
+    }
+
+    /**
+     * Toggles whether new participants of a group call can be unmuted only by administrators of the group call. Requires canManageVoiceChats rights in the corresponding chat and allowedChangeMuteMewParticipants group call flag.
+     *
+     * <p> Returns {@link Ok Ok} </p>
+     */
+    public static class ToggleGroupCallMuteNewParticipants extends Function {
+        /**
+         * Group call identifier.
+         */
+        public int groupCallId;
+        /**
+         * New value of the muteNewParticipants setting.
+         */
+        public boolean muteNewParticipants;
+
+        /**
+         * Default constructor for a function, which toggles whether new participants of a group call can be unmuted only by administrators of the group call. Requires canManageVoiceChats rights in the corresponding chat and allowedChangeMuteMewParticipants group call flag.
+         *
+         * <p> Returns {@link Ok Ok} </p>
+         */
+        public ToggleGroupCallMuteNewParticipants() {
+        }
+
+        /**
+         * Creates a function, which toggles whether new participants of a group call can be unmuted only by administrators of the group call. Requires canManageVoiceChats rights in the corresponding chat and allowedChangeMuteMewParticipants group call flag.
+         *
+         * <p> Returns {@link Ok Ok} </p>
+         *
+         * @param groupCallId Group call identifier.
+         * @param muteNewParticipants New value of the muteNewParticipants setting.
+         */
+        public ToggleGroupCallMuteNewParticipants(int groupCallId, boolean muteNewParticipants) {
+            this.groupCallId = groupCallId;
+            this.muteNewParticipants = muteNewParticipants;
+        }
+
+        /**
+         * Identifier uniquely determining type of the object.
+         */
+        public static final int CONSTRUCTOR = 284082626;
+
+        /**
+         * @return this.CONSTRUCTOR
+         */
+        @Override
+        public int getConstructor() {
+            return CONSTRUCTOR;
+        }
+    }
+
+    /**
+     * Toggles whether a group call participant is muted, unmuted, or allowed to unmute themself.
+     *
+     * <p> Returns {@link Ok Ok} </p>
+     */
+    public static class ToggleGroupCallParticipantIsMuted extends Function {
+        /**
+         * Group call identifier.
+         */
+        public int groupCallId;
+        /**
+         * User identifier.
+         */
+        public int userId;
+        /**
+         * Pass true if the user must be muted and false otherwise.
+         */
+        public boolean isMuted;
+
+        /**
+         * Default constructor for a function, which toggles whether a group call participant is muted, unmuted, or allowed to unmute themself.
+         *
+         * <p> Returns {@link Ok Ok} </p>
+         */
+        public ToggleGroupCallParticipantIsMuted() {
+        }
+
+        /**
+         * Creates a function, which toggles whether a group call participant is muted, unmuted, or allowed to unmute themself.
+         *
+         * <p> Returns {@link Ok Ok} </p>
+         *
+         * @param groupCallId Group call identifier.
+         * @param userId User identifier.
+         * @param isMuted Pass true if the user must be muted and false otherwise.
+         */
+        public ToggleGroupCallParticipantIsMuted(int groupCallId, int userId, boolean isMuted) {
+            this.groupCallId = groupCallId;
+            this.userId = userId;
+            this.isMuted = isMuted;
+        }
+
+        /**
+         * Identifier uniquely determining type of the object.
+         */
+        public static final int CONSTRUCTOR = 2089046203;
 
         /**
          * @return this.CONSTRUCTOR
