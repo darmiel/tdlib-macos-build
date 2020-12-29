@@ -10176,9 +10176,9 @@ public class TdApi {
          */
         public boolean loadedAllParticipants;
         /**
-         * Identifiers of recently speaking users in the group call.
+         * Recently speaking users in the group call.
          */
-        public int[] recentSpeakerUserIds;
+        public GroupCallRecentSpeaker[] recentSpeakers;
         /**
          * True, if only group call administrators can unmute new participants.
          */
@@ -10209,12 +10209,12 @@ public class TdApi {
          * @param canBeManaged True, if the current user can manage the group call.
          * @param participantCount Number of participants in the group call.
          * @param loadedAllParticipants True, if all group call participants are loaded.
-         * @param recentSpeakerUserIds Identifiers of recently speaking users in the group call.
+         * @param recentSpeakers Recently speaking users in the group call.
          * @param muteNewParticipants True, if only group call administrators can unmute new participants.
          * @param allowedChangeMuteNewParticipants True, if group call administrators can enable or disable muteNewParticipants setting.
          * @param duration Call duration; for ended calls only.
          */
-        public GroupCall(int id, boolean isActive, boolean isJoined, boolean needRejoin, boolean canUnmuteSelf, boolean canBeManaged, int participantCount, boolean loadedAllParticipants, int[] recentSpeakerUserIds, boolean muteNewParticipants, boolean allowedChangeMuteNewParticipants, int duration) {
+        public GroupCall(int id, boolean isActive, boolean isJoined, boolean needRejoin, boolean canUnmuteSelf, boolean canBeManaged, int participantCount, boolean loadedAllParticipants, GroupCallRecentSpeaker[] recentSpeakers, boolean muteNewParticipants, boolean allowedChangeMuteNewParticipants, int duration) {
             this.id = id;
             this.isActive = isActive;
             this.isJoined = isJoined;
@@ -10223,7 +10223,7 @@ public class TdApi {
             this.canBeManaged = canBeManaged;
             this.participantCount = participantCount;
             this.loadedAllParticipants = loadedAllParticipants;
-            this.recentSpeakerUserIds = recentSpeakerUserIds;
+            this.recentSpeakers = recentSpeakers;
             this.muteNewParticipants = muteNewParticipants;
             this.allowedChangeMuteNewParticipants = allowedChangeMuteNewParticipants;
             this.duration = duration;
@@ -10232,7 +10232,7 @@ public class TdApi {
         /**
          * Identifier uniquely determining type of the object.
          */
-        public static final int CONSTRUCTOR = 1459466524;
+        public static final int CONSTRUCTOR = -276839198;
 
         /**
          * @return this.CONSTRUCTOR
@@ -10605,6 +10605,50 @@ public class TdApi {
          * Identifier uniquely determining type of the object.
          */
         public static final int CONSTRUCTOR = -32269671;
+
+        /**
+         * @return this.CONSTRUCTOR
+         */
+        @Override
+        public int getConstructor() {
+            return CONSTRUCTOR;
+        }
+    }
+
+    /**
+     * Describes a recently speaking user in a group call.
+     */
+    public static class GroupCallRecentSpeaker extends Object {
+        /**
+         * User identifier.
+         */
+        public int userId;
+        /**
+         * True, is the user has spoken recently.
+         */
+        public boolean isSpeaking;
+
+        /**
+         * Describes a recently speaking user in a group call.
+         */
+        public GroupCallRecentSpeaker() {
+        }
+
+        /**
+         * Describes a recently speaking user in a group call.
+         *
+         * @param userId User identifier.
+         * @param isSpeaking True, is the user has spoken recently.
+         */
+        public GroupCallRecentSpeaker(int userId, boolean isSpeaking) {
+            this.userId = userId;
+            this.isSpeaking = isSpeaking;
+        }
+
+        /**
+         * Identifier uniquely determining type of the object.
+         */
+        public static final int CONSTRUCTOR = 903765260;
 
         /**
          * @return this.CONSTRUCTOR
@@ -39425,50 +39469,6 @@ public class TdApi {
          * Identifier uniquely determining type of the object.
          */
         public static final int CONSTRUCTOR = -426386685;
-
-        /**
-         * @return this.CONSTRUCTOR
-         */
-        @Override
-        public int getConstructor() {
-            return CONSTRUCTOR;
-        }
-    }
-
-    /**
-     * Checks whether a group call is still joined. Should be called every 10 seconds when tgcalls notifies about lost connection with the server.
-     *
-     * <p> Returns {@link Ok Ok} </p>
-     */
-    public static class CheckGroupCallIsJoined extends Function {
-        /**
-         * Group call identifier.
-         */
-        public int groupCallId;
-
-        /**
-         * Default constructor for a function, which checks whether a group call is still joined. Should be called every 10 seconds when tgcalls notifies about lost connection with the server.
-         *
-         * <p> Returns {@link Ok Ok} </p>
-         */
-        public CheckGroupCallIsJoined() {
-        }
-
-        /**
-         * Creates a function, which checks whether a group call is still joined. Should be called every 10 seconds when tgcalls notifies about lost connection with the server.
-         *
-         * <p> Returns {@link Ok Ok} </p>
-         *
-         * @param groupCallId Group call identifier.
-         */
-        public CheckGroupCallIsJoined(int groupCallId) {
-            this.groupCallId = groupCallId;
-        }
-
-        /**
-         * Identifier uniquely determining type of the object.
-         */
-        public static final int CONSTRUCTOR = 1657344632;
 
         /**
          * @return this.CONSTRUCTOR
